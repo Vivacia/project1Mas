@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         shadowColor: const Color(0xFFD7CCC8),
 
       ),
-      home: MyHomePage(title: 'Kitties!!!',),
+      home: const FirstRoute(),
       );
   }
 }
@@ -135,5 +135,53 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     _pagingController.dispose();
     super.dispose();
+  }
+}
+
+class FirstRoute extends StatelessWidget {
+  const FirstRoute({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('First Route'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          child: const Text('Look up images'),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Kitties!!!',)),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class SecondRoute extends StatelessWidget {
+  const SecondRoute({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Second Route'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const FirstRoute()),
+            );
+          },
+          child: const Text('Go back!'),
+        ),
+      ),
+    );
   }
 }
