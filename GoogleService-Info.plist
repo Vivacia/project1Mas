@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>862006808495-mh2fa7sd94co7a2a53qlks5f69igei3k.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.862006808495-mh2fa7sd94co7a2a53qlks5f69igei3k</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>862006808495-qurip9vb3cb4mtve99tbqr7os6bjmq66.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAYjq8Bga9J2FpMrYACi5XaWA3TaViWIzw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>862006808495</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>edu.gatech.cs8803</string>
+	<key>PROJECT_ID</key>
+	<string>projectmas-3588b</string>
+	<key>STORAGE_BUCKET</key>
+	<string>projectmas-3588b.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:862006808495:ios:0fb54411f4f93647b8295a</string>
+</dict>
+</plist>

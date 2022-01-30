@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "862006808495",
+    "project_id": "projectmas-3588b",
+    "storage_bucket": "projectmas-3588b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:862006808495:android:dd2e26921327db5db8295a",
+        "android_client_info": {
+          "package_name": "com.example.projectmas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "862006808495-isdt2ltrag5qj2gf1tbk2oc032ob6c1a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOfCM3HEUtVLl32_LgN9lGO07SvVEkliM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "862006808495-isdt2ltrag5qj2gf1tbk2oc032ob6c1a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "862006808495-mh2fa7sd94co7a2a53qlks5f69igei3k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "edu.gatech.cs8803"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

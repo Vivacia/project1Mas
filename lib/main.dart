@@ -1,13 +1,86 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/button_builder.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import './register_page.dart';
+import './signin_page.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(const AuthExampleApp());
+}
+
+class AuthExampleApp extends StatelessWidget {
+  const AuthExampleApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Firebase Example App',
+      theme: ThemeData.dark(),
+      home: const Scaffold(
+        body: AuthTypeSelector(),
+      ),
+    );
+  }
+}
+
+/// Provides a UI to select a authentication type page
+class AuthTypeSelector extends StatelessWidget {
+  const AuthTypeSelector({Key? key}) : super(key: key);
+
+  // Navigates to a new page
+  void _pushPage(BuildContext context, Widget page) {
+    Navigator.of(context) /*!*/ .push(
+      MaterialPageRoute<void>(builder: (_) => page),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Firebase Example App'),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.all(16),
+            alignment: Alignment.center,
+            child: SignInButtonBuilder(
+              icon: Icons.person_add,
+              backgroundColor: Colors.indigo,
+              text: 'Registration',
+              onPressed: () => _pushPage(context, RegisterPage()),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.all(16),
+            alignment: Alignment.center,
+            child: SignInButtonBuilder(
+              icon: Icons.verified_user,
+              backgroundColor: Colors.orange,
+              text: 'Sign In',
+              onPressed: () => _pushPage(context, SignInPage()),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -33,15 +106,15 @@ class MyApp extends StatelessWidget {
         canvasColor: const Color(0xFFD7CCC8),
         cardColor: const Color(0xFFD7CCC8),
         shadowColor: const Color(0xFFD7CCC8),
-
       ),
       home: FirstRoute(),
-      );
+    );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title, required this.text}) : super(key: key);
+  const MyHomePage({Key? key, required this.title, required this.text})
+      : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -60,13 +133,11 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   List<String> catImages = [];
 
   String _text = "cats";
 
-  final ScrollController _pagingController =
-      ScrollController();
+  final ScrollController _pagingController = ScrollController();
 
   _MyHomePageState(String text) {
     _text = text;
@@ -86,18 +157,16 @@ class _MyHomePageState extends State<MyHomePage> {
       "Access-Control-Allow-Origin": "*",
     };
 
-    String _url = 'https://meme-api.herokuapp.com/gimme/' + _text.split(" ")[0] + '/5';
+    String _url =
+        'https://meme-api.herokuapp.com/gimme/' + _text.split(" ")[0] + '/5';
 
-    final response = await http.get(
-      Uri.parse(_url),
-      headers: requestHeaders);
+    final response = await http.get(Uri.parse(_url), headers: requestHeaders);
     if (response.statusCode == 200) {
       setState(() {
         for (int i = 0; i < 5; i++) {
           catImages.add(jsonDecode(response.body)['memes'][i]['url']);
         }
-      }
-      );
+      });
     } else {
       throw Exception('Failed to load image');
     }
@@ -154,8 +223,8 @@ class FirstRoute extends StatelessWidget {
         title: const Text('Look up images!'),
       ),
       body: Center(
-        child: Column(
-          children: [
+          child: Column(
+        children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
             child: TextField(
@@ -167,22 +236,23 @@ class FirstRoute extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-          child: const Text('Look up images'),
-          onPressed: () {
-            _sendDataToSecondScreen(context, myController.text);
-          })
+              child: const Text('Look up images'),
+              onPressed: () {
+                _sendDataToSecondScreen(context, myController.text);
+              })
         ],
-        )   
-      ),
+      )),
     );
   }
 
   void _sendDataToSecondScreen(BuildContext context, String text) {
     Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MyHomePage(title: text,),
-      )
-    );
+        context,
+        MaterialPageRoute(
+          builder: (context) => MyHomePage(
+            title: text,
+            text: text,
+          ),
+        ));
   }
 }
