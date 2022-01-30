@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
@@ -78,31 +78,31 @@ class _MyHomePageState extends State<MyHomePage> {
       Uri.parse('https://meme-api.herokuapp.com/gimme/cats/5'),
       headers: requestHeaders);
     if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
       setState(() {
         for (int i = 0; i < 5; i++) {
           catImages.add(jsonDecode(response.body)['memes'][i]['url']);
         }
-        log("HELLO");
-        inspect(catImages.length);
-        inspect(catImages);
-      });
+      }
+      );
     } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
       throw Exception('Failed to load image');
     }
   }
 
   Widget postWidget() {
+    // log("HELLO");
     final PageController controller = PageController();
-    return PageView.builder(
-      onPageChanged: (int_) => fetchImages(),
-      controller: controller,
-      itemBuilder: (context, index) {
-        return Image.network(catImages[1]);
-      }
+    return Scaffold(
+      body: ListView.builder(
+        padding: const EdgeInsets.all(16.0),
+        controller: controller,
+        itemCount: catImages.length,
+        itemBuilder: (context, index) {
+          return Container(
+            child: Image.network(catImages[index], fit: BoxFit.fitWidth),
+          );
+        },
+      ),
     );
   }
 
