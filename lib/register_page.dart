@@ -1,86 +1,150 @@
 import 'package:flutter/material.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_signin_button/button_builder.dart';
-import 'package:projectmas/main.dart';
+import 'package:projectmas/profile_page.dart';
+import 'package:projectmas/fire_auth.dart';
+import 'package:projectmas/validator.dart';
 
-final FirebaseAuth _auth = FirebaseAuth.instance;
-
-/// Entrypoint example for registering via Email/Password.
 class RegisterPage extends StatefulWidget {
-  /// The page title.
-  final String title = 'Registration';
-
   const RegisterPage({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _RegisterPageState();
+  _RegisterPageState createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final _registerFormKey = GlobalKey<FormState>();
 
-  bool? _success;
-  String _userEmail = '';
+  final _nameTextController = TextEditingController();
+  final _emailTextController = TextEditingController();
+  final _passwordTextController = TextEditingController();
+
+  final _focusName = FocusNode();
+  final _focusEmail = FocusNode();
+  final _focusPassword = FocusNode();
+
+  bool _isProcessing = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Form(
-        key: _formKey,
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
+    return GestureDetector(
+      onTap: () {
+        _focusName.unfocus();
+        _focusEmail.unfocus();
+        _focusPassword.unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Register'),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Center(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                TextFormField(
-                  controller: _emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
-                  validator: (String? value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
-                    }
-                    return null;
-                  },
-                  obscureText: true,
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  alignment: Alignment.center,
-                  child: SignInButtonBuilder(
-                    icon: Icons.person_add,
-                    backgroundColor: Colors.blueGrey,
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        await _register();
-                      }
-                    },
-                    text: 'Register',
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  child: Text(
-                    _success == null
-                        ? ''
-                        : (_success!
-                            ? 'Successfully registered $_userEmail'
-                            : 'Registration failed'),
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Form(
+                  key: _registerFormKey,
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        controller: _nameTextController,
+                        focusNode: _focusName,
+                        validator: (value) => Validator.validateName(
+                          name: value,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: "Name",
+                          errorBorder: UnderlineInputBorder(
+                            borderRadius: BorderRadius.circular(6.0),
+                            borderSide: BorderSide(
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16.0),
+                      TextFormField(
+                        controller: _emailTextController,
+                        focusNode: _focusEmail,
+                        validator: (value) => Validator.validateEmail(
+                          email: value,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: "Email",
+                          errorBorder: UnderlineInputBorder(
+                            borderRadius: BorderRadius.circular(6.0),
+                            borderSide: BorderSide(
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16.0),
+                      TextFormField(
+                        controller: _passwordTextController,
+                        focusNode: _focusPassword,
+                        obscureText: true,
+                        validator: (value) => Validator.validatePassword(
+                          password: value,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: "Password",
+                          errorBorder: UnderlineInputBorder(
+                            borderRadius: BorderRadius.circular(6.0),
+                            borderSide: BorderSide(
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 32.0),
+                      _isProcessing
+                          ? CircularProgressIndicator()
+                          : Row(
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      setState(() {
+                                        _isProcessing = true;
+                                      });
+
+                                      if (_registerFormKey.currentState!
+                                          .validate()) {
+                                        User? user = await FireAuth
+                                            .registerUsingEmailPassword(
+                                          name: _nameTextController.text,
+                                          email: _emailTextController.text,
+                                          password:
+                                              _passwordTextController.text,
+                                        );
+
+                                        setState(() {
+                                          _isProcessing = false;
+                                        });
+
+                                        if (user != null) {
+                                          Navigator.of(context)
+                                              .pushAndRemoveUntil(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ProfilePage(user: user),
+                                            ),
+                                            ModalRoute.withName('/'),
+                                          );
+                                        }
+                                      }
+                                    },
+                                    child: Text(
+                                      'Sign up',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                    ],
                   ),
                 )
               ],
@@ -89,35 +153,5 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the Widget is disposed
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  // Example code for registration.
-  Future<void> _register() async {
-    final User? user = (await _auth.createUserWithEmailAndPassword(
-      email: _emailController.text,
-      password: _passwordController.text,
-    ))
-        .user;
-    if (user != null) {
-      setState(() {
-        _success = true;
-        _userEmail = user.email ?? '';
-      });
-    } else {
-      _success = false;
-    }
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => FirstRoute(),
-        ));
   }
 }

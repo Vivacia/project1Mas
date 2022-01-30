@@ -9,9 +9,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:projectmas/login_page.dart';
+import 'package:projectmas/register_page.dart';
 import 'firebase_options.dart';
-import './register_page.dart';
-import './signin_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -74,7 +74,7 @@ class AuthTypeSelector extends StatelessWidget {
               icon: Icons.verified_user,
               backgroundColor: Colors.orange,
               text: 'Sign In',
-              onPressed: () => _pushPage(context, SignInPage()),
+              onPressed: () => _pushPage(context, LoginPage()),
             ),
           ),
         ],
