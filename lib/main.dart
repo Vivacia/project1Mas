@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 void main() {
   runApp(const MyApp());
@@ -63,10 +64,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<String> catImages = [];
 
+  final ScrollController _pagingController =
+      ScrollController();
+
   @override
   void initState() {
     super.initState();
     fetchImages();
+    _pagingController.addListener(() {
+      fetchImages();
+    });
   }
 
   fetchImages() async {
@@ -95,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: ListView.builder(
         padding: const EdgeInsets.all(16.0),
-        controller: controller,
+        controller: _pagingController,
         itemCount: catImages.length,
         itemBuilder: (context, index) {
           return Container(
@@ -122,5 +129,11 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: postWidget(),
     );
+  }
+
+  @override
+  void dispose() {
+    _pagingController.dispose();
+    super.dispose();
   }
 }
