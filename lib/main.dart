@@ -13,13 +13,11 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  static const String _title = 'Kitty App!';
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Kitty App!',
+      title: 'Image App!',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -37,13 +35,13 @@ class MyApp extends StatelessWidget {
         shadowColor: const Color(0xFFD7CCC8),
 
       ),
-      home: const FirstRoute(),
+      home: FirstRoute(),
       );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title, required this.text}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -55,17 +53,24 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   final String title;
+  final String text;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState(text);
 }
 
 class _MyHomePageState extends State<MyHomePage> {
 
   List<String> catImages = [];
 
+  String _text = "cats";
+
   final ScrollController _pagingController =
       ScrollController();
+
+  _MyHomePageState(String text) {
+    _text = text;
+  }
 
   @override
   void initState() {
@@ -81,8 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
       "Access-Control-Allow-Origin": "*",
     };
 
+    String _url = 'https://meme-api.herokuapp.com/gimme/' + _text.split(" ")[0] + '/5';
+
     final response = await http.get(
-      Uri.parse('https://meme-api.herokuapp.com/gimme/cats/5'),
+      Uri.parse(_url),
       headers: requestHeaders);
     if (response.statusCode == 200) {
       setState(() {
@@ -98,16 +105,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget postWidget() {
     // log("HELLO");
-    final PageController controller = PageController();
     return Scaffold(
       body: ListView.builder(
         padding: const EdgeInsets.all(16.0),
         controller: _pagingController,
         itemCount: catImages.length,
         itemBuilder: (context, index) {
-          return Container(
-            child: Image.network(catImages[index], fit: BoxFit.fitWidth),
-          );
+          return Image.network(catImages[index], fit: BoxFit.fitWidth);
         },
       ),
     );
@@ -139,49 +143,46 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class FirstRoute extends StatelessWidget {
-  const FirstRoute({Key? key}) : super(key: key);
+  FirstRoute({Key? key}) : super(key: key);
+
+  final myController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('First Route'),
+        title: const Text('Look up images!'),
       ),
       body: Center(
-        child: ElevatedButton(
+        child: Column(
+          children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+            child: TextField(
+              controller: myController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: 'Enter a search term',
+              ),
+            ),
+          ),
+          ElevatedButton(
           child: const Text('Look up images'),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MyHomePage(title: 'Kitties!!!',)),
-            );
-          },
-        ),
+            _sendDataToSecondScreen(context, myController.text);
+          })
+        ],
+        )   
       ),
     );
   }
-}
 
-class SecondRoute extends StatelessWidget {
-  const SecondRoute({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Second Route'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const FirstRoute()),
-            );
-          },
-          child: const Text('Go back!'),
-        ),
-      ),
+  void _sendDataToSecondScreen(BuildContext context, String text) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MyHomePage(title: text,),
+      )
     );
   }
 }
