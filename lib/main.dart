@@ -28,7 +28,7 @@ class AuthExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Firebase Example App',
+      title: 'Image App',
       theme: ThemeData.dark(),
       home: const Scaffold(
         body: AuthTypeSelector(),
@@ -64,7 +64,7 @@ class AuthTypeSelector extends StatelessWidget {
               icon: Icons.person_add,
               backgroundColor: Colors.indigo,
               text: 'Registration',
-              onPressed: () => _pushPage(context, RegisterPage()),
+              onPressed: () => _pushPage(context, const RegisterPage()),
             ),
           ),
           Container(
@@ -74,7 +74,7 @@ class AuthTypeSelector extends StatelessWidget {
               icon: Icons.verified_user,
               backgroundColor: Colors.orange,
               text: 'Sign In',
-              onPressed: () => _pushPage(context, LoginPage()),
+              onPressed: () => _pushPage(context, const LoginPage()),
             ),
           ),
         ],
